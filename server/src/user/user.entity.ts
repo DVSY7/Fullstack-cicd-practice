@@ -1,11 +1,11 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity()
+@Entity() // 테이블을 담당하고 있음
 export class User{
     
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn() // auto_increment 자동증가 컬럼
     id!: number;
 
-    @Column()
+    @Column() // 컬럼 한개
     name!: string;
 }

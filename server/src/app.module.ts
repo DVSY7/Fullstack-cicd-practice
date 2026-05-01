@@ -8,7 +8,7 @@ import { UserModule } from './user/user.module';
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
+      host: 'mysql',
       port: 3306,
       username: 'root',
       password: '1009',
@@ -22,3 +22,7 @@ import { UserModule } from './user/user.module';
   providers: [AppService],
 })
 export class AppModule {}
+
+
+// > module > controller > service 
+// > entity: DB에 접근

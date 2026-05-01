@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8
+    container_name: mysql-container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 1009
+      MYSQL_DATABASE: mydb
+    ports:
+      - '3307:3306'
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  server:
+    build: ./server
+    container_name: nest-server-contanier
+    ports:
+      - '3000:3000'
+    depends_on:
+      - mysql
+
+  client:
+    build: ./client
+    container_name: react-client-container
+    ports:
+      - '5173:80'
+    depends_on:
+      - server
+
+volumes:
+  mysql-data:
