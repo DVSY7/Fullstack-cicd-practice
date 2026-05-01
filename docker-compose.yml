@@ -8,6 +8,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: 1009
       MYSQL_DATABASE: mydb
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: 1009
     ports:
       - '3307:3306'
     volumes:

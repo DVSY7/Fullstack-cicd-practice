@@ -10,7 +10,7 @@ import { UserModule } from './user/user.module';
       type: 'mysql',
       host: 'mysql',
       port: 3306,
-      username: 'root',
+      username: 'myuser',
       password: '1009',
       database: 'mydb',
       autoLoadEntities: true,
