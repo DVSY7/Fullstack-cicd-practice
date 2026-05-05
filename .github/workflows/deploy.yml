@@ -26,7 +26,7 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/cicd-client:latest
 
       - name: EC2에 배포
-        uses: appleboy/ssh-action@v0.1.10
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
