@@ -54,6 +54,8 @@ export const App = () => {
           </li>
         ))}
       </ul>
+
+      <h2>CICD test Version:1.0</h2>
     </div>
   )
 }
