@@ -16,7 +16,7 @@ services:
       - mysql-data:/var/lib/mysql
 
   server:
-    build: ./server
+    image: dochubsang/cicd-server:latest
     container_name: nest-server-contanier
     ports:
       - '3000:3000'
@@ -24,7 +24,7 @@ services:
       - mysql
 
   client:
-    build: ./client
+    image: dochubsang/cicd-client:latest
     container_name: react-client-container
     ports:
       - '5173:80'
