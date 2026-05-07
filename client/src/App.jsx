@@ -33,7 +33,7 @@ export const App = () => {
 
   return (
     <div style={{ padding: '40px' }}>
-      <h1>User CRUD</h1>
+      <h1>User CRUD v2</h1>
 
       {/* 추가 */}
       <div>
@@ -54,8 +54,6 @@ export const App = () => {
           </li>
         ))}
       </ul>
-
-      <h2>CICD test Version:1.0</h2>
     </div>
   )
 }
