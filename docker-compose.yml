@@ -6,10 +6,10 @@ services:
     container_name: mysql-container
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: 1009
-      MYSQL_DATABASE: mydb
-      MYSQL_USER: myuser
-      MYSQL_PASSWORD: 1009
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
       - '3307:3306'
     volumes:
@@ -18,6 +18,12 @@ services:
   server:
     image: dochubsang/cicd-server:latest
     container_name: nest-server-contanier
+    enviroment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_DATABASE: ${DB_DATABASE}
     ports:
       - '3000:3000'
     depends_on:
