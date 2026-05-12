@@ -1,6 +1,5 @@
 import { INestApplication } from "@nestjs/common"
 import { Test, TestingModule } from "@nestjs/testing";
-import { TypeOrmModule } from "@nestjs/typeorm";
 import request from 'supertest';
 import { AppModule } from "../app.module";
 
@@ -9,19 +8,7 @@ describe('User API(e2e)', () => {
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [
-        TypeOrmModule.forRoot({
-          type: 'mysql',
-          host: process.env.DB_HOST || 'localhost',
-          port: Number(process.env.DB_PORT) || 3306,
-          username: process.env.DB_USERNAME || 'root',
-          password: process.env.DB_PASSWORD || '1009',
-          database: process.env.DB_DATABASE || 'mydb_test', // 테스트용 DB
-          autoLoadEntities: true,
-          synchronize: true,
-        }),
-        AppModule,
-      ],
+      imports: [AppModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
