@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8
+    container_name: mysql-container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - '3307:3306'
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  server:
+    image: dochubsang/cicd-server:staging
+    container_name: nest-server-contanier
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_DATABASE: ${DB_DATABASE}
+      CORS_ORIGIN: ${CORS_ORIGIN}
+    ports:
+      - '3000:3000'
+    depends_on:
+      - mysql
+
+  client:
+    image: dochubsang/cicd-client:staging
+    container_name: react-client-container
+    ports:
+      - '5173:80'
+    depends_on:
+      - server
+
+volumes:
+  mysql-data:

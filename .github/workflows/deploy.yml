@@ -79,9 +79,9 @@ jobs:
           script: |
             cd ~/Fullstack-cicd-practice
             git pull origin develop
-            docker compose down
-            docker compose pull
-            docker compose up -d
+            docker compose -f docker-compose.staging.yml down
+            docker compose -f docker-compose.staging.yml pull
+            docker compose -f docker-compose.staging.yml up -d
 
   # CD 단계 - Production 배포 (main 브랜치)
   deploy-production:
@@ -119,6 +119,6 @@ jobs:
           script: |
             cd ~/Fullstack-cicd-practice
             git pull origin main
-            docker compose down
-            docker compose pull
-            docker compose up -d
+            docker compose -f docker-compose.production.yml down
+            docker compose -f docker-compose.production.yml pull
+            docker compose -f docker-compose.production.yml up -d
