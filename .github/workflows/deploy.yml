@@ -64,7 +64,7 @@ jobs:
           echo "STAGING URL: ${{ secrets.STAGING_API_URL }}"
           echo "VITE_API_URL=${{ secrets.STAGING_API_URL }}" > ./client/.env
           cat ./client/.env
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/cicd-server:staging ./serve
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/cicd-server:staging ./server
           docker build -t ${{ secrets.DOCKER_USERNAME }}/cicd-client:staging ./client
           docker push ${{ secrets.DOCKER_USERNAME }}/cicd-server:staging
           docker push ${{ secrets.DOCKER_USERNAME }}/cicd-client:staging
