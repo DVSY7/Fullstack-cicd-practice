@@ -2,7 +2,7 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
 
 jobs:
   # CI 단계 - 테스트
@@ -43,10 +43,49 @@ jobs:
           cd server
           npm run test
 
-  # CD 단계 - 빌드 및 배포 (테스트 통과 시에만 실행)
-  build-and-deploy:
+  # CD 단계 - Staging 배포 (develop 브랜치)
+  deploy-staging:
     runs-on: ubuntu-latest
-    needs: test # test job이 성공해야 실행
+    needs: test
+    if: github.ref == 'refs/heads/develop' # develop 브랜치일 때만 실행
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v3
+
+      - name: Docker Hub 로그인
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: 이미지 빌드 및 Docker Hub push
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/cicd-server:staging ./server
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/cicd-client:staging ./client
+          docker push ${{ secrets.DOCKER_USERNAME }}/cicd-server:staging
+          docker push ${{ secrets.DOCKER_USERNAME }}/cicd-client:staging
+
+      - name: Staging EC2에 배포
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.STAGING_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          debug: true
+          script: |
+            cd ~/Fullstack-cicd-practice
+            git pull origin develop
+            docker compose down
+            docker compose pull
+            docker compose up -d
+  
+  
+  # CD 단계 - Production 배포 (main 브랜치)
+  deploy-production:
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main' # main 브랜치일 때만 실행
 
     steps:
       - name: 코드 체크아웃
@@ -65,7 +104,7 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/cicd-server:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/cicd-client:latest
 
-      - name: EC2에 배포
+      - name: Production EC2에 배포
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -74,7 +113,7 @@ jobs:
           debug: true
           script: |
             cd ~/Fullstack-cicd-practice
-            git pull origin main
+            git pull origin develop
             docker compose down
             docker compose pull
             docker compose up -d
