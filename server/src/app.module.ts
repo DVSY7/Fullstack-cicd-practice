@@ -9,6 +9,10 @@ import { ConfigModule } from '@nestjs/config';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: [
+        `.env.${process.env.NODE_ENV}`,
+        '.env',
+      ]
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
@@ -25,7 +29,7 @@ import { ConfigModule } from '@nestjs/config';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
 
 
 // > module > controller > service 
