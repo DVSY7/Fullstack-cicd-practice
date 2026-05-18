@@ -13,8 +13,6 @@ services:
       CORS_ORIGIN: ${CORS_ORIGIN}
     ports:
       - '3000:3000'
-    depends_on:
-      - mysql
 
   client:
     image: dochubsang/cicd-client:staging
