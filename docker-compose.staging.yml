@@ -3,7 +3,7 @@ version: '3.8'
 services:
   server:
     image: dochubsang/cicd-server:staging
-    container_name: nest-server-contanier
+    container_name: nest-server-container
     environment:
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
@@ -11,8 +11,11 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       DB_DATABASE: ${DB_DATABASE}
       CORS_ORIGIN: ${CORS_ORIGIN}
+      REDIS_HOST: ${REDIS_HOST}
     ports:
       - '3000:3000'
+    depends_on:
+      - redis
 
   client:
     image: dochubsang/cicd-client:staging
@@ -21,3 +24,9 @@ services:
       - '5173:80'
     depends_on:
       - server
+
+  redis:
+    image: redis:7
+    container_name: redis-container
+    ports:
+      - '6379:6379'
