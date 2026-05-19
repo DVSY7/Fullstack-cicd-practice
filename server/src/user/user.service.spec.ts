@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from './user.entity';
+import { REDIS_CLIENT } from '../redis.module';
 
 describe('UserService', () => {
   let service: UserService;
@@ -16,6 +17,13 @@ describe('UserService', () => {
     delete: jest.fn(),
   };
 
+  // 가짜 Redis Client 만들기
+  const mockRedisClient = {
+    get: jest.fn().mockResolvedValue(null),
+    set: jest.fn().mockResolvedValue('OK'),
+    del: jest.fn().mockResolvedValue(1),
+  }
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -24,6 +32,10 @@ describe('UserService', () => {
           provide: getRepositoryToken(User),
           useValue: mockUserRepository, // 가짜 Repository 주입
         },
+        {
+          provide: REDIS_CLIENT,
+          useValue: mockRedisClient, // 가짜 Redis Client 주입
+        }
       ],
     }).compile();
 

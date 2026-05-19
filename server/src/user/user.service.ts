@@ -25,13 +25,11 @@ export class UserService {
   async findAll() {
     const cached = await this.redisClient.get('users');
     if (cached) {
-      console.log('캐시 히트!');
       return JSON.parse(cached);
     }
 
     const users = await this.userRepository.find();
     await this.redisClient.set('users', JSON.stringify(users), 'EX', 30);
-    console.log('DB 조회 후 캐시 저장');
     return users;
   }
 
