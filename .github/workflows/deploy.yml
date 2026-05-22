@@ -72,19 +72,36 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/cicd-server:staging
           docker push ${{ secrets.DOCKER_USERNAME }}/cicd-client:staging
 
-      - name: Staging EC2에 배포
+      - name: Staging-server-1 배포
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.STAGING_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.STAGING_SSH_KEY }}
-          debug: true
           script: |
             cd ~/Fullstack-cicd-practice
             git pull origin develop
             docker compose -f docker-compose.staging.yml down
             docker compose -f docker-compose.staging.yml pull
             docker compose -f docker-compose.staging.yml up -d
+
+      - name: Staging-server-1 헬스체크
+        run: |
+          sleep 30
+          curl -f http://${{ secrets.STAGING_HOST }}:3000 || exit 1
+
+      - name: Staging-server-2 배포
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.STAGING_HOST_2 }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          script: |
+            cd ~/Fullstack-cicd-practice
+            git pull origin develop
+            docker compose -f docker-compose.staging-server.yml down
+            docker compose -f docker-compose.staging-server.yml pull
+            docker compose -f docker-compose.staging-server.yml up -d
 
   # CD 단계 - Production 배포 (main 브랜치)
   deploy-production:
