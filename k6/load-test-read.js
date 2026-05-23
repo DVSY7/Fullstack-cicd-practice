@@ -6,7 +6,7 @@ export const options = {
   duration: '30s',
 };
 
-const BASE_URL = 'http://43.201.96.175:3000/user';
+const BASE_URL = 'http://staging-alb-1145366645.ap-northeast-2.elb.amazonaws.com/user';
 
 export default function () {
   // GET 전체 조회만 반복
