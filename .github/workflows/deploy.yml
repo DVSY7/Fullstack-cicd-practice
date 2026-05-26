@@ -168,7 +168,22 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/cicd-server:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/cicd-client:latest
 
-      - name: Production EC2에 배포
+      - name: AWS CLI 설정
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      # production-server-1 배포
+      - name: server-1 Target Group 제외
+        run: |
+          aws elbv2 deregister-targets \
+            --target-group-arn ${{ secrets.PRODUCTION_TARGET_GROUP_ARN }} \
+            --targets Id=${{ secrets.PRODUCTION_INSTANCE_ID_1 }}
+          sleep 35
+
+      - name: server-1 배포
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -181,3 +196,47 @@ jobs:
             docker compose -f docker-compose.production.yml down
             docker compose -f docker-compose.production.yml pull
             docker compose -f docker-compose.production.yml up -d
+
+      - name: server-1 헬스체크
+        run: |
+          sleep 30
+          curl -f http://${{ secrets.EC2_HOST }}:3000 || exit 1
+      
+      - name: server-1 Target Group 재등록
+        run: |
+          aws elbv2 register-targets \
+            --target-group-arn ${{ secrets.PRODUCTION_TARGET_GROUP_ARN }} \
+            --targets Id=${{ secrets.PRODUCTION_INSTANCE_ID_1 }}
+          sleep 30
+      
+      # production-server-2 배포
+      - name: server-2 Target Group 제외
+        run: |
+          aws elbv2 deregister-targets \
+            --target-group-arn ${{ secrets.PRODUCTION_TARGET_GROUP_ARN }} \
+            --targets Id=${{ secrets.PRODUCTION_INSTANCE_ID_2 }}
+          sleep 35
+
+      - name: server-2 배포
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.PRODUCTION_HOST_2 }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd ~/Fullstack-cicd-practice
+            git pull origin main
+            docker compose -f docker-compose.production-server.yml down
+            docker compose -f docker-compose.production-server.yml pull
+            docker compose -f docker-compose.production-server.yml up -d
+
+      - name: server-2 헬스체크
+        run: |
+          sleep 30
+          curl -f http://${{ secrets.PRODUCTION_HOST_2 }}:3000 || exit 1
+
+      - name: server-2 Target Group 재등록
+        run: |
+          aws elbv2 register-targets \
+            --target-group-arn ${{ secrets.PRODUCTION_TARGET_GROUP_ARN }} \
+            --targets Id=${{ secrets.PRODUCTION_INSTANCE_ID_2 }}
