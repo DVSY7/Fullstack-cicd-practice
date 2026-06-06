@@ -30,3 +30,15 @@ services:
     container_name: redis-container
     ports:
       - '6379:6379'
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana-container
+    ports:
+      - '3001:3000'
+    volumes:
+      - grafana-data:/var/lib/grafana
+    restart: always
+
+volumes:
+  grafana-data:
